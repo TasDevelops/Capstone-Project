@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Postcode search</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>  
+
+<script>
+     $(document).ready(function(){
+
+
+$("#postcode_lookup_frm_div").on("submit", function(e){
+
+    e.preventDefault();
+
+    var postcode = $("#postcode_search").val();
+    
+    var url_to_validate = "https://8iaydpopqh.execute-api.us-east-1.amazonaws.com/postcodeValidator?"  + postcode;
+    var url_to_planpermission= "https://v9t0c71wv8.execute-api.us-east-1.amazonaws.com/planpermission?"  + postcode;
+    var url_to_pc= "https://shb5d5acm0.execute-api.us-east-1.amazonaws.com/postcodelambda?"  + postcode;
+    var url_to_nearestpc = "https://nv5mkd9lbf.execute-api.us-east-1.amazonaws.com/nearest_pc?" + postcode
+    var url_to_crimestat = "https://kadloq9ezk.execute-api.us-east-1.amazonaws.com/Crime_stats?" + postcode;
+    var url_to_recordcount = "https://4xzxo3ajni.execute-api.us-east-1.amazonaws.com/recordcount?" + postcode;
+
+
+    $.get(url_to_validate, function(data, status){
+
+      if(data == 'true'){
+        console.log(data)
+
+      alert("post code is valid");
+
+
+      } else if(data == 'false'){
+        console.log(data)
+
+        alert("post code is not valid");
+
+      }              
+
+    });
+
+
+    $.get(url_to_planpermission, function(data, status){
+     console.log(data);
+      var li = $("<li></li>").text(data);
+      $(li).appendTo("#plan_perm").addClass('list-group-item');
+
+
+
+});
+
+
+$.get(url_to_pc, function(data, status){
+
+$("#pc").text(data);
+
+
+});
+
+
+$.get(url_to_nearestpc, function(data, status){
+
+$("#nearest_pc").text(data);
+
+
+});
+
+
+
+$.get(url_to_recordcount , function(data, status){
+  $("#record_count").text(data);
+
+
+});
+
+
+
+$.get(url_to_crimestat , function(data, status){
+
+//console.log(data)
+
+ newString = data.replace('[','').replace(']', '');
+
+  var str = newString;
+
+  var crime_record_array = new Array();
+
+  crime_record_array = str.split(', "anti-social-behaviour",');
+
+  console.log(data);
+
+  for(var i=0;i<crime_record_array.length;i++) {
+
+    var li = $("<li></li>").text(crime_record_array[i]);
+
+    $(li).appendTo("#crime_status").addClass('list-group-item');
+
+}
+
+});
+
+
+
+
+});
+});
+
+
+  </script>
+</head>
+<body>
+  <style>
+    body {background-color: maroon;}
+    </style>
+
+
+<div id="postcode_lookup_frm_div">
+
+
+  <form id="postcode_lookup_frm" action="" >
+ 
+  <p class="input_text">
+  <input type="text"  class="input_error" id="postcode_search" placeholder="Eg. W53DF" />
+  </p>
+  <p class="input_text">
+  <input type="Submit" value="Lookup Postcode" id="frm_submit_btn" />
+  </p>
+  </form>
+  
+</div>
+
+
+
+
+  <div id="results_1">
+    <style>
+      label {color: white;}
+    
+    </style>
+  
+  
+  <label class="label_box">Planning Permissions</label> 
+  <span class="span_box" id="plan_perm"></span>
+ 
+ </div>
+</br>
+ 
+ <div id="results_2">
+  
+  <label class="label_box">Parliamentary Constituency </label> 
+  <span class="span_box" id="pc"></span>
+  </div>
+</br>
+
+  <div id="results_3">
+  
+    <label class="label_box">Nearest Postcodes </label> 
+    <span class="span_box" id="nearest_pc"></span>
+    </div>
+  </br>
+
+  <div id="results_4">
+  
+    <label class="label_box">Crime stats</label> 
+    <span class="span_box" id="crime_status"></span>
+    </div>
+  </br>
+
+  <div id="results_5">
+  
+    <label class="label_box">Record Count</label> 
+    <span class="span_box" id="record_count"></span>
+    </div>
+  </br>
+
+
+</body>
+
+</html>
